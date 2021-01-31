@@ -6,7 +6,6 @@ inject_into_file 'Gemfile', before: 'group :development, :test do' do
   <<~RUBY
     gem 'autoprefixer-rails'
     gem 'font-awesome-sass'
-    gem 'simple_form'
 
   RUBY
 end
@@ -71,7 +70,7 @@ environment generators
 # AFTER BUNDLE
 ########################################
 after_bundle do
-  # Generators: db + simple form + pages controller
+  # Generators: db + pages controller
   ########################################
   rails_command 'db:drop db:create db:migrate'
   generate(:controller, 'pages', 'home', '--skip-routes', '--no-test-framework')
