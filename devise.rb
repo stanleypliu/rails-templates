@@ -16,6 +16,8 @@ inject_into_file 'Gemfile', after: 'group :development, :test do' do
   gem 'pry-byebug'
   gem 'pry-rails'
   gem 'dotenv-rails'
+  gem 'rspec-rails'
+  gem 'factory_bot_rails'
   RUBY
 end
 
@@ -26,6 +28,10 @@ gsub_file('Gemfile', /# gem 'redis'/, "gem 'redis'")
 run 'rm -rf vendor'
 run 'cd app/assets && mkdir fonts'
 run 'cd app/assets/stylesheets && mkdir base components pages utilities && touch application.scss'
+
+# Tests
+########################################
+run 'rm -rf test'
 
 # Dev environment
 ########################################
@@ -68,12 +74,8 @@ file 'app/views/shared/_flashes.html.erb', <<~HTML
   <% end %>
 HTML
 
-run 'curl -L https://github.com/lewagon/awesome-navbars/raw/master/templates/_navbar_wagon.html.erb > app/views/shared/_navbar.html.erb'
-
 inject_into_file 'app/views/layouts/application.html.erb', after: '<body>' do
   <<-HTML
-
-    <%= render 'shared/navbar' %>
     <%= render 'shared/flashes' %>
   HTML
 end
@@ -84,7 +86,8 @@ generators = <<~RUBY
   config.generators do |generate|
     generate.assets false
     generate.helper false
-    generate.test_framework :test_unit, fixture: false
+    generate.test_framework :rspec
+    generate.fixture_replacement :factory_bot
   end
 RUBY
 
@@ -112,6 +115,10 @@ after_bundle do
     *.swp
     .DS_Store
   TXT
+
+  # RSpec install 
+  ########################################
+  generate('rspec:install')
 
   # Devise install + user
   ########################################

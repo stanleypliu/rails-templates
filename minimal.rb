@@ -16,6 +16,8 @@ inject_into_file 'Gemfile', after: 'group :development, :test do' do
   gem 'pry-byebug'
   gem 'pry-rails'
   gem 'dotenv-rails'
+  gem 'rspec-rails'
+  gem 'factory_bot_rails'
   RUBY
 end
 
@@ -30,6 +32,10 @@ YAML
 run 'rm -rf vendor'
 run 'cd app/assets && mkdir fonts'
 run 'cd app/assets/stylesheets && mkdir base components pages utilities && touch application.scss'
+
+# Tests
+########################################
+run 'rm -rf test'
 
 # Dev environment
 ########################################
@@ -60,7 +66,8 @@ generators = <<~RUBY
   config.generators do |generate|
     generate.assets false
     generate.helper false
-    generate.test_framework :test_unit, fixture: false
+    generate.test_framework :rspec
+    generate.fixture_replacement :factory_bot
   end
 RUBY
 
@@ -70,7 +77,7 @@ environment generators
 # AFTER BUNDLE
 ########################################
 after_bundle do
-  # Generators: db + pages controller
+  # Generators: db + pages controller + RSpec
   ########################################
   rails_command 'db:drop db:create db:migrate'
   generate(:controller, 'pages', 'home', '--skip-routes', '--no-test-framework')
@@ -89,6 +96,10 @@ after_bundle do
     *.swp
     .DS_Store
   TXT
+
+  # RSpec install 
+  ########################################
+  generate('rspec:install')
 
   inject_into_file 'config/webpack/environment.js', before: 'module.exports' do
     <<~JS
