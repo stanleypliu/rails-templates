@@ -27,11 +27,12 @@ file 'Procfile', <<~YAML
   web: bundle exec puma -C config/puma.rb
 YAML
 
-# Assets
+# Assets - replace with my own set of stylesheets
 ########################################
-run 'rm -rf vendor'
-run 'cd app/assets && mkdir fonts'
-run 'cd app/assets/stylesheets && mkdir base components pages utilities && touch application.scss'
+run 'rm -rf app/assets/stylesheets'
+run 'wget https://github.com/stanleypliu/stylesheets/archive/main.zip'
+run 'unzip main.zip'
+run 'mv stylesheets-main app/assets/ && mv app/assets/stylesheets-main app/assets/stylesheets'
 
 # Tests
 ########################################
